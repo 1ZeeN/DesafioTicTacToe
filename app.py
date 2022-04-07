@@ -78,7 +78,9 @@ def game(pos, player):
     '''
     Faz a verificação do input dado pela função jogada(), caso esteja tudo certo a jogada é realizada!
     '''
-    global index, y, run
+    global index, y, run,jogador
+    if (jogador == player): #Impede que o mesmo jogador jogue 2 vezes seguidas, utilizando uma variavel auxiliar que salva o ultimo jogador.
+        return jsonify({'status':'ERROR','jogada':pos,'jogador':player,'message':'Jogada Invalida: O mesmo jogador não pode jogar duas vezes!'}),400
     try: #validação dos inputs: se respeitam as regras do jogo.
         if len(pos) != 3 or (pos[0] != 'P') or re.match(r"([^OX])",player):
             raise Exception()
@@ -103,6 +105,7 @@ def game(pos, player):
         if quadro[linha-1][coluna-1] == 0: #Preenchimento da variavel QUADRO com base na posição dada pelo usuário.
             quadro[linha-1][coluna-1] = y
             jogadas.append(f"{pos} => {player}") #Salva a posição e o jogador para exibir em status().
+            jogador = player
             tela()
             return jsonify({'status':'OK','jogada':pos,'jogador':player,'message':'Movimento executado!'})
         else:
@@ -112,7 +115,7 @@ app = Flask(__name__)
 
 index = 1
 jogadas = []
-stats = x = z = jogo = ""
+stats = x = z = jogo = jogador = ""
 run = True
 winner = None
 quadro = [[0, 0, 0],
